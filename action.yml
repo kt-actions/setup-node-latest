@@ -49,10 +49,10 @@ runs:
       shell: bash
       run: |
         if [[ "${{ inputs.earliest }}" == "true" ]]; then
-          "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | head -n 1)" >> "$GITHUB_OUTPUT"
+          echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | head -n 1)" >> "$GITHUB_OUTPUT"
           echo "Earliest version selected: $version"
         else
-          "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | tail -n 1)" >> "$GITHUB_OUTPUT"
+          echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | tail -n 1)" >> "$GITHUB_OUTPUT"
           echo "Latest version selected: $version"
         fi
       #run: echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -r | head -n 1)" >> "$GITHUB_OUTPUT"
