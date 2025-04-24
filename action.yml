@@ -1,5 +1,5 @@
-name: "Setup latest Node.js environment"
-description: "Setup latest Node.js environment from provided version array (i.e. from matrix.node-version)"
+name: "Setup latest/earliest Node.js environment"
+description: "Setup latest/earliest Node.js environment from provided version array (i.e. like from matrix.node-version)"
 author: "GitHub"
 inputs:
   always-auth:
@@ -8,6 +8,9 @@ inputs:
   matrix-node-version:
     description: "Version Spec array, i.e. from matrix.node-version. Latest will be selected from this array and setup-node will be run with the selected version."
     required: true
+  earliest:
+    description: "Set this option if you want the action to select for the earliest available version that satisfies the version spec."
+    default: "false"
   node-version-file:
     description: "File containing the version Spec of the version to use.  Examples: package.json, .nvmrc, .node-version, .tool-versions."
   architecture:
@@ -42,9 +45,17 @@ outputs:
 runs:
   using: composite
   steps:
-    - id: max-node-version
+    - id: select-node-version
       shell: bash
-      run: echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -r | head -n 1)" >> "$GITHUB_OUTPUT"
+      run: |
+        if [[ "${{ inputs.earliest }}" == "true" ]]; then
+          "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | head -n 1)" >> "$GITHUB_OUTPUT"
+          echo "Earliest version selected: $version"
+        else
+          "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | tail -n 1)" >> "$GITHUB_OUTPUT"
+          echo "Latest version selected: $version"
+        fi
+      #run: echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -r | head -n 1)" >> "$GITHUB_OUTPUT"
 
     - id: setup-node
       uses: actions/setup-node@v4
