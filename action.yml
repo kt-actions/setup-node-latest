@@ -50,10 +50,10 @@ runs:
       run: |
         if [[ "${{ inputs.earliest }}" == "true" ]]; then
           echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | head -n 1)" >> "$GITHUB_OUTPUT"
-          echo "Earliest version selected: $version"
+          echo "Earliest version selected"
         else
           echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | tail -n 1)" >> "$GITHUB_OUTPUT"
-          echo "Latest version selected: $version"
+          echo "Latest version selected"
         fi
       #run: echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -r | head -n 1)" >> "$GITHUB_OUTPUT"
 
@@ -61,7 +61,7 @@ runs:
       uses: actions/setup-node@v4
       with:
         always-auth: ${{ inputs.always-auth }}
-        node-version: ${{ steps.max-node-version.outputs.version }}
+        node-version: ${{ steps.select-node-version.outputs.version }}
         node-version-file: ${{ inputs.node-version-file }}
         architecture: ${{ inputs.architecture }}
         check-latest: ${{ inputs.check-latest }}
