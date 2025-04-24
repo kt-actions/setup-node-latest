@@ -5,12 +5,12 @@ inputs:
   always-auth:
     description: "Set always-auth in npmrc."
     default: "false"
-  matrix-node-version:
-    description: "Version Spec array, i.e. from matrix.node-version. Latest will be selected from this array and setup-node will be run with the selected version."
-    required: true
   earliest:
     description: "Set this option if you want the action to select for the earliest available version that satisfies the version spec."
     default: "false"
+  matrix-node-version:
+    description: "Version Spec array, i.e. from matrix.node-version. Latest will be selected from this array and setup-node will be run with the selected version."
+    required: true
   node-version-file:
     description: "File containing the version Spec of the version to use.  Examples: package.json, .nvmrc, .node-version, .tool-versions."
   architecture:
