@@ -11,8 +11,8 @@ inputs:
   matrix-node-version:
     description: 'Version Spec array, i.e. from matrix.node-version. Latest will be selected from this array and setup-node will be run with the selected version.'
     required: false
-  earliest:
-    description: 'Set this option if you want the action to select for the earliest available version that satisfies the version spec.'
+  matrix-node-version-earliest:
+    description: 'Set this option if you want the action to select for the earliest available version from the matrix.node-version array.'
     default: 'false'
   node-version-file:
     description: 'File containing the version Spec of the version to use.  Examples: package.json, .nvmrc, .node-version, .tool-versions.'
@@ -58,7 +58,7 @@ runs:
           echo "Node version provided: ${{ inputs.node-version }}"
         elif [[ -n "${{ inputs.matrix-node-version }}" ]]; then
           echo "Node version array provided: ${{ inputs.matrix-node-version }}"
-          if [[ "${{ inputs.earliest }}" == "true" ]]; then
+          if [[ "${{ matrix-node-version-earliest }}" == "true" ]]; then
             echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | head -n 1)" >> "$GITHUB_OUTPUT"
             echo "Earliest version selected"
           else
