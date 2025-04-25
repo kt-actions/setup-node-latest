@@ -1,45 +1,48 @@
-name: "Setup latest/earliest Node.js environment"
-description: "Setup latest/earliest Node.js environment from provided version array (i.e. like from matrix.node-version)"
-author: "GitHub"
+name: 'Setup concrete or latest/earliest Node.js environment'
+description: 'Setup concrete latest/earliest Node.js environment from provided version array (i.e. like from matrix.node-version)'
+author: 'GitHub'
 inputs:
   always-auth:
-    description: "Set always-auth in npmrc."
-    default: "false"
+    description: 'Set always-auth in npmrc.'
+    default: 'false'
+  node-version:
+    description: 'Version Spec to use. Examples: 18, 18.x, 18.0.0, 18.0.x, 18.0.0-x, 18.0.0-x64.'
+    required: false
   matrix-node-version:
-    description: "Version Spec array, i.e. from matrix.node-version. Latest will be selected from this array and setup-node will be run with the selected version."
-    required: true
+    description: 'Version Spec array, i.e. from matrix.node-version. Latest will be selected from this array and setup-node will be run with the selected version.'
+    required: false
   earliest:
-    description: "Set this option if you want the action to select for the earliest available version that satisfies the version spec."
-    default: "false"
+    description: 'Set this option if you want the action to select for the earliest available version that satisfies the version spec.'
+    default: 'false'
   node-version-file:
-    description: "File containing the version Spec of the version to use.  Examples: package.json, .nvmrc, .node-version, .tool-versions."
+    description: 'File containing the version Spec of the version to use.  Examples: package.json, .nvmrc, .node-version, .tool-versions.'
   architecture:
-    description: "Target architecture for Node to use. Examples: x86, x64. Will use system architecture by default."
+    description: 'Target architecture for Node to use. Examples: x86, x64. Will use system architecture by default.'
   check-latest:
-    description: "Set this option if you want the action to check for the latest available version that satisfies the version spec."
-    default: "false"
+    description: 'Set this option if you want the action to check for the latest available version that satisfies the version spec.'
+    default: 'false'
   registry-url:
-    description: "Optional registry to set up for auth. Will set the registry in a project level .npmrc and .yarnrc file, and set up auth to read in from env.NODE_AUTH_TOKEN."
+    description: 'Optional registry to set up for auth. Will set the registry in a project level .npmrc and .yarnrc file, and set up auth to read in from env.NODE_AUTH_TOKEN.'
   scope:
-    description: "Optional scope for authenticating against scoped registries. Will fall back to the repository owner when using the GitHub Packages registry (https://npm.pkg.github.com/)."
+    description: 'Optional scope for authenticating against scoped registries. Will fall back to the repository owner when using the GitHub Packages registry (https://npm.pkg.github.com/).'
   token:
     description: Used to pull node distributions from node-versions. Since there's a default, this is typically not supplied by the user. When running this action on github.com, the default value is sufficient. When running on GHES, you can pass a personal access token for github.com if you are experiencing rate limiting.
     default: ${{ github.server_url == 'https://github.com' && github.token || '' }}
   cache:
-    description: "Used to specify a package manager for caching in the default directory. Supported values: npm, yarn, pnpm."
+    description: 'Used to specify a package manager for caching in the default directory. Supported values: npm, yarn, pnpm.'
   cache-dependency-path:
-    description: "Used to specify the path to a dependency file: package-lock.json, yarn.lock, etc. Supports wildcards or a list of file names for caching multiple dependencies."
+    description: 'Used to specify the path to a dependency file: package-lock.json, yarn.lock, etc. Supports wildcards or a list of file names for caching multiple dependencies.'
   mirror:
-    description: "Used to specify an alternative mirror to downlooad Node.js binaries from"
+    description: 'Used to specify an alternative mirror to downlooad Node.js binaries from'
   mirror-token:
-    description: "The token used as Authorization header when fetching from the mirror"
+    description: 'The token used as Authorization header when fetching from the mirror'
 
 outputs:
   cache-hit:
-    description: "A boolean value to indicate if a cache was hit."
+    description: 'A boolean value to indicate if a cache was hit.'
     value: ${{ steps.setup-node.outputs.cache-hit }}
   node-version:
-    description: "The installed node version."
+    description: 'The installed node version.'
     value: ${{ steps.setup-node.outputs.node-version }}
 
 runs:
@@ -47,15 +50,22 @@ runs:
   steps:
     - id: select-node-version
       shell: bash
+      # check inputs.node-version, if provided, use it
+      # if not, check inputs.matrix-node-version, if provided, use it
       run: |
-        if [[ "${{ inputs.earliest }}" == "true" ]]; then
-          echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | head -n 1)" >> "$GITHUB_OUTPUT"
-          echo "Earliest version selected"
-        else
-          echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | tail -n 1)" >> "$GITHUB_OUTPUT"
-          echo "Latest version selected"
+        if [[ -n "${{ inputs.node-version }}" ]]; then
+          echo "version=${{ inputs.node-version }}" >> "$GITHUB_OUTPUT"
+          echo "Node version provided: ${{ inputs.node-version }}"
+        elif [[ -n "${{ inputs.matrix-node-version }}" ]]; then
+          echo "Node version array provided: ${{ inputs.matrix-node-version }}"
+          if [[ "${{ inputs.earliest }}" == "true" ]]; then
+            echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | head -n 1)" >> "$GITHUB_OUTPUT"
+            echo "Earliest version selected"
+          else
+            echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | tail -n 1)" >> "$GITHUB_OUTPUT"
+            echo "Latest version selected"
+          fi
         fi
-      #run: echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -r | head -n 1)" >> "$GITHUB_OUTPUT"
 
     - id: setup-node
       uses: actions/setup-node@v4
