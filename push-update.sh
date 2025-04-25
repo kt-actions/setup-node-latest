@@ -18,7 +18,7 @@ if [ -z "$LATEST_TAG" ]; then
     git push origin "$LATEST_TAG"
 fi
 # Get the major version from the latest tag
-MAJOR_VERSION=$(echo "$LATEST_TAG" | cut -d '.' -f 1)
+MAJOR_TAG=$(echo "$LATEST_TAG" | cut -d '.' -f 1)
 # Force push the tag to the remote repository
 # This is necessary if the tag already exists
 git tag -af "$MAJOR_TAG" -m "$COMMIT_MESSAGE"
