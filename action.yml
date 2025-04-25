@@ -65,6 +65,8 @@ runs:
             echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | tail -n 1)" >> "$GITHUB_OUTPUT"
             echo "Latest version selected"
           fi
+        else
+          echo "No node version provided default will be used"
         fi
 
     - id: setup-node
