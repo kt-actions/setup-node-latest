@@ -58,7 +58,7 @@ runs:
           echo "Node version provided: ${{ inputs.node-version }}"
         elif [[ -n "${{ inputs.matrix-node-version }}" ]]; then
           echo "Node version array provided: ${{ inputs.matrix-node-version }}"
-          if [[ "${{ matrix-node-version-earliest }}" == "true" ]]; then
+          if [[ "${{ inputs.matrix-node-version-earliest }}" == "true" ]]; then
             echo "version=$(echo '${{ inputs.matrix-node-version }}' | jq -r '.[] | tostring' | sort -V | head -n 1)" >> "$GITHUB_OUTPUT"
             echo "Earliest version selected"
           else
