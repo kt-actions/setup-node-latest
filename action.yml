@@ -1,5 +1,6 @@
 name: 'Setup concrete or latest/earliest Node.js environment'
 description: 'Setup concrete latest/earliest Node.js environment from provided version array (i.e. like from matrix.node-version)'
+author: 'GitHub + mod by kt-actions'
 
 # Interface from actions/setup-node@v4 with few custom parameters
 inputs:
