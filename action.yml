@@ -1,6 +1,7 @@
 name: 'Setup concrete or latest/earliest Node.js environment'
 description: 'Setup concrete latest/earliest Node.js environment from provided version array (i.e. like from matrix.node-version)'
 
+# Interface from actions/setup-node@v4 with few custom parameters
 inputs:
   always-auth:
     description: 'Set always-auth in npmrc.'
@@ -8,9 +9,11 @@ inputs:
   node-version:
     description: 'Version Spec to use. Examples: 18, 18.x, 18.0.0, 18.0.x, 18.0.0-x, 18.0.0-x64.'
     required: false
+  # Custom parameter
   matrix-node-version:
     description: 'Version Spec array, i.e. from matrix.node-version. Latest will be selected from this array and setup-node will be run with the selected version.'
     required: false
+  # Custom parameter
   matrix-node-version-earliest:
     description: 'Set this option if you want the action to select for the earliest available version from the matrix.node-version array.'
     default: 'false'
